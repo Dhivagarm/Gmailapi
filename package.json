@@ -1,0 +1,18 @@
+{
+  "name": "gmail_api",
+  "version": "1.0.0",
+  "description": "sending email using gmail api",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dhivagar M",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "googleapis": "^73.0.0",
+    "nodemailer": "^6.6.0",
+    "nodemon": "^2.0.7"
+  }
+}
