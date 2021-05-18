@@ -1,7 +1,10 @@
 const { google } = require('googleapis');
 const express = require('express')
-const OAuth2Data = require('./google_creds.json')
+const OAuth2Data = require('../google_creds.json')
 const nodemailer=require('nodemailer')
+const fs = require('fs');
+const util = require('util');
+
 
 const app = express()
 
@@ -15,7 +18,7 @@ app.use(express.json())
 
 
 //endpoint to initiate the authentication process
-app.get('/', (req, res) => {
+app.get('/',  (req, res) => {
     if (!authed) {
         // Generate an OAuth URL and redirect there
         const url = oAuth2Client.generateAuthUrl({
@@ -40,7 +43,19 @@ app.get('/', (req, res) => {
                 console.log('No labels found.');
             }
         });
-        res.send('Logged in')
+        
+        
+        //storing the credentials to the file
+        fs.writeFile("../Authclient", JSON.stringify(oAuth2Client.credentials), function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("The file was saved!");
+        });
+
+        
+      
+        res.send('Logged in') 
     }
 })
 
@@ -77,10 +92,16 @@ request body should be a json object with following details
 */
 
 app.post('/sendmail',async (req,res)=>{
-
+    //getting back the credentials from the file
+    const readFile = util.promisify(fs.readFile);
+    var creds= await readFile('./Authclient');
+    creds = JSON.parse(creds)
+    console.log(creds)
     try {
+        
         //getting accesstoken
-        const accessToken = oAuth2Client.credentials.access_token;
+        const accessToken = creds.access_token;
+
 
         //using nodemailer module for creating transport
         const transport = nodemailer.createTransport({
@@ -90,7 +111,7 @@ app.post('/sendmail',async (req,res)=>{
             user: req.body.from,
             clientId: CLIENT_ID,
             clientSecret: CLIENT_SECRET,
-            refreshToken: oAuth2Client.credentials.refresh_token,
+            refreshToken: creds.refresh_token,
             accessToken: accessToken,
           },
 
@@ -101,7 +122,7 @@ app.post('/sendmail',async (req,res)=>{
           subject: req.body.subject,
           text: req.body.text,
         };
-        //sending mail using mail options
+        //sending mail using mailoptions
         const result = await transport.sendMail(mailOptions);
         res.status(200).send(result);
       } catch (error) {

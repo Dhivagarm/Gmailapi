@@ -4,15 +4,18 @@
   "description": "sending email using gmail api",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dhivagar M",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "fs": "^0.0.1-security",
     "googleapis": "^73.0.0",
+    "json-parser": "^3.1.2",
     "nodemailer": "^6.6.0",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "util": "^0.12.3"
   }
 }
